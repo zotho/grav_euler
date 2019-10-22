@@ -1,7 +1,11 @@
-import examples.two_tons
+# import examples.two_tons
+# import examples.spinner
+import examples.earth_moon
 
 if __name__ == "__main__":
     print("Starting")
-    two = examples.two_tons.TwoTons()
+    # two = examples.two_tons.TwoTons()
+    # two = examples.spinner.Spinner()
+    two = examples.earth_moon.EarthMoon()
     two.run()
     print("Ending")

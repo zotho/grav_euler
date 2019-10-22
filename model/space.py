@@ -12,7 +12,7 @@ class Space:
     def __init__(self, update: Callable[["Space", np.float], None]):
         self.g_const = constants.GRAVITATIONAL_CONST
         self.contains: List[model.point.Point] = list()
-        self.time: np.float = np.float(0.)
+        self.time: np.float = np.float128(0.)
         self.update = functools.partial(update, self)
 
     def add(self, instance: model.point.Point):

@@ -1,5 +1,3 @@
-import math
-
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -7,20 +5,24 @@ import model.point
 import model.space
 import examples
 import euler.update
+import constants
 
 
-class TwoTons(examples.Example):
+class Spinner(examples.Example):
     def __init__(self):
-        m = np.float128(1000.)
-        r = np.float128(-100.)
-        self.point_a = model.point.Point(r, m=m)
-        self.point_b = model.point.Point(r, m=m)
+        m = np.float128(1.e4)
+        r = np.float128(2.e5)
+        v = np.sqrt(constants.GRAVITATIONAL_CONST * m / 4. / r)
+        self.point_a = model.point.Point(-r/2., m=m)
+        self.point_a.vel[1] = v
+        self.point_b = model.point.Point(r/2., m=m)
+        self.point_b.vel[1] = -v
         self.space_instance = model.space.Space(euler.update.Euler.update)
         self.space_instance.add(self.point_a)
         self.space_instance.add(self.point_b)
         self.n_iter = 27300
         self.every = 100
-        self.time_coord = np.zeros((math.floor(self.n_iter / self.every), 3))
+        self.time_coord = np.zeros((self.n_iter // self.every, 3))
 
     def run(self):
         point_a = self.point_a
