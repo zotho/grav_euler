@@ -1,1 +1,1 @@
-FLOAT_ALIGN = ">11.6f"
+FLOAT_ALIGN = ">15.5f"
