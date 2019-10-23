@@ -1,4 +1,6 @@
 import math
+import pathlib
+import datetime
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -12,9 +14,9 @@ import euler.update
 class TwoTons(examples.Example):
     def __init__(self):
         m = np.float128(1000.)
-        r = np.float128(-100.)
+        r = np.float128(-10.)
         self.point_a = model.point.Point(r, m=m)
-        self.point_b = model.point.Point(r, m=m)
+        self.point_b = model.point.Point(-r, m=m)
         self.space_instance = model.space.Space(euler.update.Euler.update)
         self.space_instance.add(self.point_a)
         self.space_instance.add(self.point_b)
@@ -38,7 +40,12 @@ class TwoTons(examples.Example):
                 time_coord[j][2] = point_b.pos[0]
                 j += 1
                 print(space_instance)
-        print("Ending")
         plt.plot(time_coord[:, 0], time_coord[:, 1])
         plt.plot(time_coord[:, 0], time_coord[:, 2])
-        plt.show()
+        path = pathlib.Path() / \
+            "examples" / \
+            "results" / \
+            f"{__name__}_{str(datetime.datetime.now()).replace(' ', '_')}.png"
+        while path.exists():
+            path /= "_1"
+        plt.savefig(path)

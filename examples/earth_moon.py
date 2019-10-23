@@ -15,9 +15,7 @@ class EarthMoon(examples.Example):
         self.earth = model.point.Point(m=constants.EARTH.MASS)
         self.moon = model.point.Point(constants.MOON.PERIGEE_ORBIT_RADIUS, m=constants.MOON.MASS)
         self.moon.vel[1] = constants.MOON.MAX_ORBITAL_VELOCITY
-        self.earth.vel[1] = -constants.MOON.MAX_ORBITAL_VELOCITY * \
-                            constants.MOON.MASS /\
-                            constants.EARTH.MASS
+        self.earth.vel[1] = - constants.MOON.MAX_ORBITAL_VELOCITY * constants.MOON.MASS / constants.EARTH.MASS
         self.space_instance = model.space.Space(euler.update.Euler.update)
         self.space_instance.add(self.earth)
         self.space_instance.add(self.moon)
