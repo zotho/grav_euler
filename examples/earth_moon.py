@@ -1,4 +1,6 @@
 import math
+import pathlib
+import datetime
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -49,4 +51,10 @@ class EarthMoon(examples.Example):
         plt.plot(time_coord[:, 0], time_coord[:, 2])
         plt.plot(time_coord[:, 0], time_coord[:, 3])
         plt.plot(time_coord[:, 0], time_coord[:, 4])
-        plt.show()
+        path = pathlib.Path() / \
+               "examples" / \
+               "results" / \
+               f"{__name__}_{str(datetime.datetime.now()).replace(' ', '_')}.png"
+        while path.exists():
+            path /= "_1"
+        plt.savefig(path)
