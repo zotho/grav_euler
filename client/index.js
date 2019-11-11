@@ -1,6 +1,6 @@
-import * as THREE from '/node_modules/three/build/three.module.js';
+import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/109/three.module.js';
 import { ConvexBufferGeometry } from '/lib/ConvexGeometry.js';
-import CameraControls from '/node_modules/camera-controls/dist/camera-controls.module.js';
+import CameraControls from 'https://cdn.jsdelivr.net/npm/camera-controls@1.15.0/dist/camera-controls.module.js';
 // import { OrbitControls } from './lib/OrbitControls.js';
 
 CameraControls.install( { THREE: THREE } );
