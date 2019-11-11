@@ -6,6 +6,7 @@ import examples.spinner
 import examples.earth_moon
 import server.server
 
+
 def run_scene(scene_name):
     available_scenes = dict(
         two_tons=examples.two_tons.TwoTons(),
@@ -21,6 +22,7 @@ def run_scene(scene_name):
         logging.error(f"""The scene "{scene_name}" is missing.\n"""
                       f"""Available scene keys is: {", ".join([ f'"{name}"' for name in available_scenes.keys()])}.""")
 
+
 def run_server():
     server.server.run()
 
@@ -35,5 +37,3 @@ if __name__ == "__main__":
         run_scene(args.scene)
     elif args.server:
         run_server()
-
-    

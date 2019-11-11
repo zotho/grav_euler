@@ -6,11 +6,14 @@ import asyncio
 import json
 import logging
 import websockets
+import time
 
 import dodecahedron
 
 
-MODEL = {"value": 0}
+MODEL = {"value": list()}
+
+ROTATION = {"value": None, "rotation_time": 0., "last_rotation_user": None}
 
 USERS = set()
 
@@ -21,14 +24,25 @@ def model():
     return json.dumps({"type": "model", **MODEL})
 
 
+def rotate():
+    return json.dumps({"type": "rotate", **{key: ROTATION[key] for key in ["value", "rotation_time"]}})
+
+
 def users_event():
     return json.dumps({"type": "users", "count": len(USERS)})
 
 
-async def notify_state():
+async def notify_model():
     if USERS:  # asyncio.wait doesn't accept an empty list
-        message = state_event()
+        message = model()
         await asyncio.wait([user.send(message) for user in USERS])
+
+
+async def notify_rotate(last_user):
+    other_users = {user for user in USERS if user is not last_user}
+    if other_users and ROTATION.get("value"):  # asyncio.wait doesn't accept an empty list
+        message = rotate()
+        await asyncio.wait([user.send(message) for user in other_users])
 
 
 async def notify_users():
@@ -40,6 +54,8 @@ async def notify_users():
 async def register(websocket):
     USERS.add(websocket)
     await notify_users()
+    if ROTATION.get("value"):
+        await asyncio.wait([websocket.send(rotate())])
 
 
 async def unregister(websocket):
@@ -56,14 +72,20 @@ async def counter(websocket, path):
             data = json.loads(message)
             if data["action"] == "minus":
                 MODEL["value"] -= 1
-                await notify_state()
+                await notify_model()
             elif data["action"] == "plus":
                 MODEL["value"] += 1
-                await notify_state()
+                await notify_model()
+            elif data["action"] == "rotate":
+                ROTATION["value"] = data["value"]
+                ROTATION["rotation_time"] = time.time()
+                ROTATION["last_rotation_user"] = websocket
+                await notify_rotate(websocket)
             else:
                 logging.error("Unsupported event: {}", data)
     finally:
         await unregister(websocket)
+
 
 def run(port=6789):
     logging.basicConfig()

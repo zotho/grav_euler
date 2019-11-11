@@ -12,7 +12,7 @@ def Dodecahedron(edge):
     # R = edge*np.sqrt(10)*np.sqrt(5+np.sqrt(5))/10
     # points *= R
 
-    #
+    # golden ratio
     fi = (1 + np.sqrt(5))/2
     scale_coeff = edge * fi / 2
 
@@ -21,10 +21,10 @@ def Dodecahedron(edge):
     _i = (-1/fi, 1/fi)
     _0 = (0,)
     var_matrix = (
-        (_1,_1,_1),
-        (_0,_f,_i),
-        (_i,_0,_f),
-        (_f,_i,_0),
+        (_1, _1, _1),
+        (_0, _f, _i),
+        (_i, _0, _f),
+        (_f, _i, _0),
     )
 
 
@@ -41,6 +41,5 @@ def Dodecahedron(edge):
         for case in var_line[1:]:
             line_cases = mult_variants(line_cases, case)
         all_cases = itertools.chain(all_cases, line_cases)
-
 
     return np.array(tuple(all_cases)) * scale_coeff
