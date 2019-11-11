@@ -1,11 +1,9 @@
 import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/109/three.module.js';
-import { ConvexBufferGeometry } from '/lib/ConvexGeometry.js';
+import { ConvexBufferGeometry } from '/lib/ConvexGeometry.min.js';
+import Stats from '/lib/stats.module.min.js';
 import CameraControls from 'https://cdn.jsdelivr.net/npm/camera-controls@1.15.0/dist/camera-controls.module.js';
-// import { OrbitControls } from './lib/OrbitControls.js';
 
 CameraControls.install( { THREE: THREE } );
-
-import Stats from '/lib/stats.module.js';
 
 let websocket;
 let last_rotation_time = 0;
@@ -16,17 +14,17 @@ const objects = [];
 let WIDTH = window.innerWidth;
 let HEIGHT = window.innerHeight;
 
-const init = () => {
+const init = async () => {
     scene = new THREE.Scene();
     clock = new THREE.Clock();
 
-    renderer = new THREE.WebGLRenderer({antialias: true});
+    renderer = await new THREE.WebGLRenderer({antialias: true});
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(WIDTH, HEIGHT);
-    var container = document.getElementById('container');
-    container.appendChild(renderer.domElement);
+    var container = await document.getElementById('container');
+    await container.appendChild(renderer.domElement);
 
-    camera = new THREE.PerspectiveCamera(60, WIDTH / HEIGHT, 1, 200);
+    camera = await new THREE.PerspectiveCamera(60, WIDTH / HEIGHT, 1, 200);
     camera.position.z = 150;
     scene.background = new THREE.Color(0x111111);
     scene.fog = new THREE.Fog(0x111111, 150, 200);
@@ -37,26 +35,15 @@ const init = () => {
     camera.add(light);
     scene.add(camera);
 
-    controls = new CameraControls(camera, renderer.domElement);
-    controls.addEventListener('controlend', processRotation);
+    controls = await new CameraControls(camera, renderer.domElement);
+    controls.addEventListener('controlend', debounce(processRotation, 100));
     window.addEventListener('wheel', debounce(processRotation, 500));
 
-    // controls.minDistance = 100;
-    // controls.maxDistance = 200;
-    // controls.maxPolarAngle = Math.PI / 2;
-    // controls.enableZoom = false;
-    // controls.enablePan = false;
-    // controls.enableRotate = false;
-
     stats = new Stats();
-    container.appendChild(stats.dom);
+    await container.appendChild(stats.dom);
 
     window.addEventListener('resize', onWindowResize, false);
 }
-
-// const geometryDodecahedron = edge => {
-    // 
-// }
 
 const onWindowResize = () => {
     camera.aspect = window.innerWidth / window.innerHeight;
@@ -65,30 +52,24 @@ const onWindowResize = () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-const animate = () => {
+const animate = async () => {
     requestAnimationFrame( animate );
 
-    render();
-    stats.update();
+    await render();
+    if (stats) {
+        await stats.update();
+    }
 }
 
-const render = () => {
-    // var time = Date.now() * 0.001;
-
+const render = async () => {
     const delta = clock.getDelta();
-    const updated = controls.update( delta );
-
-    // objects.forEach(object => {
-        // object.rotation.x = 0.25 * time;
-        // object.rotation.y = 0.25 * time;
-    // });
-
-    // camera.rotation.x = time;
-
-    renderer.render(scene, camera);
+    const updated = controls && controls.update( delta );
+    if (renderer) {
+        await renderer.render(scene, camera);
+    }
 }
 
-const buildModel = data => {
+const buildModel = async data => {
     const modelGeometry = new THREE.Geometry();
 
     for (let coords of data) {
@@ -112,7 +93,7 @@ const buildModel = data => {
         transparent: true,
     });
 
-    const meshGeometry = new ConvexBufferGeometry(modelGeometry.vertices);
+    const meshGeometry = await new ConvexBufferGeometry(modelGeometry.vertices);
 
     let mesh = new THREE.Mesh(meshGeometry, meshMaterial);
     mesh.material.side = THREE.BackSide; // back faces
@@ -127,10 +108,6 @@ const buildModel = data => {
     objects.push(mesh);
 }
 
-// Returns a function, that, as long as it continues to be invoked, will not
-// be triggered. The function will be called after it stops being called for
-// N milliseconds. If `immediate` is passed, trigger the function on the
-// leading edge, instead of the trailing.
 const debounce = (func, wait, immediate) => {
     var timeout;
     return function() {
@@ -146,38 +123,37 @@ const debounce = (func, wait, immediate) => {
     };
 }
 
-const processRotation = () => {
-    websocket.send(JSON.stringify({
+const processRotation = async () => {
+    await websocket.send( await JSON.stringify({
         action: 'rotate',
-        value: controls.toJSON(),
+        value: await controls.toJSON(),
     }));
 }
 
-const handleRotation = (stateJSONString, rotation_time) => {
-    console.log(stateJSONString);
+const handleRotation = async (stateJSONString, rotation_time) => {
     if (controls && stateJSONString && rotation_time > last_rotation_time) {
         last_rotation_time = rotation_time
-        controls.fromJSON(stateJSONString, true);
+        await controls.fromJSON(stateJSONString, true);
     }
 }
 
-const initWebSocket = () => {
-    const users = document.querySelector('.users');
+const initWebSocket = async () => {
+    const users = await document.querySelector('.users');
     // Write your own websocket address. Output of:
     // lt --port 6789
-    websocket = new WebSocket("wss://***.localtunnel.me");
-    websocket.onmessage = event => {
-        const data = JSON.parse(event.data);
+    websocket = await new WebSocket("wss://splendid-warthog-90.localtunnel.me");
+    websocket.onmessage = async event => {
+        const data = await JSON.parse(event.data);
         switch (data.type) {
             case 'model':
-                buildModel(data.value);
+                await buildModel(data.value);
                 break;
             case 'rotate':
-                handleRotation(data.value, data.rotation_time);
+                await handleRotation(data.value, data.rotation_time);
                 break;
             case 'users':
                 users.textContent = (
-                    data.count.toString() + " user" + (data.count == 1 ? "" : "s")
+                    await data.count.toString() + " user" + (data.count == 1 ? "" : "s")
                 );
                 break;
             default:

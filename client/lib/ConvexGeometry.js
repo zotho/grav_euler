@@ -7,7 +7,7 @@ import {
 	Float32BufferAttribute,
 	Geometry
 } from "https://cdnjs.cloudflare.com/ajax/libs/three.js/109/three.module.js";
-import { ConvexHull } from "./ConvexHull.js";
+import { ConvexHull } from "./ConvexHull.min.js";
 
 // ConvexGeometry
 
