@@ -15,6 +15,8 @@ MODEL = {"value": list()}
 
 ROTATION = {"value": None, "rotation_time": 0., "last_rotation_user": None}
 
+AVAILABLE_USER_NUMBERS = list(range(9))
+USER_NUMBER_MAPPING = dict()
 USERS = set()
 
 
@@ -29,7 +31,7 @@ def rotate():
 
 
 def users_event():
-    return json.dumps({"type": "users", "count": len(USERS)})
+    return json.dumps({"type": "users", "value": list(USER_NUMBER_MAPPING.values())})
 
 
 async def notify_model():
@@ -53,6 +55,7 @@ async def notify_users():
 
 async def register(websocket):
     USERS.add(websocket)
+    USER_NUMBER_MAPPING[websocket] = AVAILABLE_USER_NUMBERS.pop(0)
     await notify_users()
     if ROTATION.get("value"):
         await asyncio.wait([websocket.send(rotate())])
@@ -67,7 +70,8 @@ async def counter(websocket, path):
     # register(websocket) sends user_event() to websocket
     await register(websocket)
     try:
-        await websocket.send(model())
+        await notify_model()
+        # await     websocket.send(model())
         async for message in websocket:
             data = json.loads(message)
             if data["action"] == "minus":

@@ -1,17 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <title>Websockets</title>
-    <link rel="icon" href="https://avatars3.githubusercontent.com/u/22890821?s=40&amp;v=4">
-    <style type="text/css">body{margin:0;background-color:#000;color:#fff;font-family:Monospace;font-size:13px;line-height:24px;overscroll-behavior:none}canvas{display:block}.state{position:absolute;right:10px;top:10px}</style>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<title>Websockets</title>
+	<link rel="icon" href="https://avatars3.githubusercontent.com/u/22890821?s=40&amp;v=4">
+	<script src="https://kit.fontawesome.com/ce839ea7ee.js" crossorigin="anonymous"></script>
+	<style type="text/css">body{margin:0;background-color:#000;color:#fff;line-height:24px;overscroll-behavior:none}canvas{display:block}.state{position:absolute;right:10px;}i{padding-top:10px;}</style>
 </head>
 <body>
 	<div class="state">
-        <span class="users">?</span> online
-    </div>
-    <div id="container"></div>
-    <script async type="module" src="index.js"></script>
+		<!-- <span class="users">?</span> online -->
+		<ul class="fa-ul">
+			<li><i class="fas fa-dove icon-0 user-icon" style="display: none; color: #FF6F61"></i></li>
+			<li><i class="fas fa-dog icon-1 user-icon" style="display: none; color: #FA9A85"></i></li>
+			<li><i class="fas fa-crow icon-2 user-icon" style="display: none; color: #CE5B78"></i></li>
+			<li><i class="fas fa-cat icon-3 user-icon" style="display: none; color: #E08119"></i></li>
+			<li><i class="fas fa-frog icon-4 user-icon" style="display: none; color: #577284"></i></li>
+			<li><i class="fas fa-horse icon-5 user-icon" style="display: none; color: #DD4132"></i></li>
+			<li><i class="fas fa-hippo icon-6 user-icon" style="display: none; color: #9E1030"></i></li>
+			<li><i class="fas fa-spider icon-7 user-icon" style="display: none; color: #FE840E"></i></li>
+			<li><i class="fas fa-dragon icon-8 user-icon" style="display: none; color: #C62168"></i></li>
+		</ul>
+	</div>
+	<div id="container"></div>
+	<script async type="module" src="index.js"></script>
 </body>
 </html>

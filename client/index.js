@@ -140,8 +140,13 @@ const handleRotation = async (stateJSONString, rotation_time) => {
     }
 }
 
+const handleUsers = async (users, new_state) => {
+    console.log(users, new_state);
+    
+}
+
 const initWebSocket = async () => {
-    const users = await document.querySelector('.users');
+    const users = await document.querySelectorAll('.user-icon');
     // Write your own websocket address. Output of:
     // lt --port 6789
     websocket = await new WebSocket("wss://splendid-warthog-90.localtunnel.me");
@@ -155,9 +160,10 @@ const initWebSocket = async () => {
                 await handleRotation(data.value, data.rotation_time);
                 break;
             case 'users':
-                users.textContent = (
-                    await data.count.toString() + " user" + (data.count == 1 ? "" : "s")
-                );
+                // users.textContent = (
+                //     await data.count.toString() + " user" + (data.count == 1 ? "" : "s")
+                // );
+                await handleUsers(users, data.value);
                 break;
             default:
                 console.error(
