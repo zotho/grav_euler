@@ -3,6 +3,9 @@ import { ConvexBufferGeometry } from '/lib/ConvexGeometry.min.js';
 import Stats from '/lib/stats.module.min.js';
 import CameraControls from 'https://cdn.jsdelivr.net/npm/camera-controls@1.15.0/dist/camera-controls.module.js';
 
+const StatsPanelCopy = Stats.Panel;
+Stats.Panel = function (a, b, c) { return StatsPanelCopy(a, "#fff", "#111"); }
+
 CameraControls.install( { THREE: THREE } );
 
 let websocket;
