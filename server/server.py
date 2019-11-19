@@ -10,6 +10,9 @@ import time
 
 import dodecahedron
 
+logging.basicConfig()
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 MODEL = {"value": list()}
 
@@ -54,6 +57,7 @@ async def notify_users():
 
 
 async def register(websocket):
+    logger.info("Register")
     USERS.add(websocket)
     USER_NUMBER_MAPPING[websocket] = AVAILABLE_USER_NUMBERS.pop(0)
     await notify_users()
@@ -62,6 +66,7 @@ async def register(websocket):
 
 
 async def unregister(websocket):
+    logger.info("Unregister")
     USERS.remove(websocket)
     await notify_users()
 
@@ -74,27 +79,28 @@ async def counter(websocket, path):
         # await     websocket.send(model())
         async for message in websocket:
             data = json.loads(message)
-            if data["action"] == "minus":
-                MODEL["value"] -= 1
-                await notify_model()
-            elif data["action"] == "plus":
-                MODEL["value"] += 1
-                await notify_model()
-            elif data["action"] == "rotate":
+            # if data["action"] == "minus":
+            #     MODEL["value"] -= 1
+            #     await notify_model()
+            # elif data["action"] == "plus":
+            #     MODEL["value"] += 1
+            #     await notify_model()
+            if data["action"] == "rotate":
+                logger.info("Rotation")
                 ROTATION["value"] = data["value"]
                 ROTATION["rotation_time"] = time.time()
                 ROTATION["last_rotation_user"] = websocket
                 await notify_rotate(websocket)
             else:
-                logging.error("Unsupported event: {}", data)
+                logger.error("Unsupported event: {}", data)
     finally:
         await unregister(websocket)
 
 
 def run(port=6789):
-    logging.basicConfig()
-
+    logger.info("Starting websocket server")
     start_server = websockets.serve(counter, "localhost", port)
+    logger.info("Websocket server started")
 
     asyncio.get_event_loop().run_until_complete(start_server)
     asyncio.get_event_loop().run_forever()
