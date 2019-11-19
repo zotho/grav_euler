@@ -149,7 +149,7 @@ const initWebSocket = async () => {
     const users = await document.querySelectorAll('.user-icon');
     // Write your own websocket address. Output of:
     // lt --port 6789
-    websocket = await new WebSocket("wss://splendid-warthog-90.localtunnel.me");
+    websocket = await new WebSocket("wss://***.localtunnel.me");
     websocket.onmessage = async event => {
         const data = await JSON.parse(event.data);
         switch (data.type) {
